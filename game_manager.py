@@ -1,31 +1,36 @@
 import collections
 
+from utils import constants
+from utils import singleton
+
+@singleton.singleton
 class GameManager(object):
   """Manages score of bowling game."""
 
-  frameScores = None  # Hold pins knocked and score scored in each frame.
-  frameCounter = 0  # Would be 0 to 9.
+  def __init__(self):
+    self.frameScores = None  # Hold pins knocked and score scored in each frame.
+    self.frameCounter = 0  # Would be 0 to 9.
 
-  @classmethod
   def startNewGame(self):
     """Starts a new game."""
-    GameManager.frameScores = collections.OrderedDict([
-        (frameId, {'first-try': 0, 'second-try': 0, 'score': 0})
+    self.frameScores = collections.OrderedDict([
+        (frameId, {'tries': {0: 0, 1: 0}, 'score': 0})
         for frameId in range(10)
     ])
-    return {'message': 'Game started successfully.'}
+    return {'message': 'New game started successfully.'}
 
-  @classmethod
   def getScore(self):
-    totalScore = sum(GameManager.frameScores[frame]['score']
-                     for frame in GameManager.frameScores)
-    return {'frame-scores': GameManager.frameScores, 'total-score': totalScore}
+    if self.frameScores is None:
+      return {'message': 'Please start game before fetching score.'}
 
-  @classmethod
-  def pinsKnocked(self):
+    totalScore = sum(self.frameScores[frame]['score']
+                     for frame in self.frameScores)
+    return {'frame-scores': self.frameScores, 'total-score': totalScore}
+
+  def pinsKnocked(self, pinsKnocked):
     """Updates score when a new pin is knocked."""
-    if GameManager.frameScores is None:
+    self.frameScores[constants.TOTAL_FRAMES - 1]['tries'][2] = pinsKnocked
+    if self.frameScores is None:
       return {'message': 'Please start game before this operation.'}
     else:
       return {'message': 'Scores updated for this move.'}
-    # GameManager.frameScores[0]['first-try'] = 10

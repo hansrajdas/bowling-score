@@ -9,17 +9,20 @@ from game_manager import GameManager
 app = Flask(__name__)
 api = Api(app)
 
+gameMgr = GameManager()
+
 class GetScore(Resource):
   def get(self):
-    return GameManager.getScore()
+    return gameMgr.getScore()
 
 class StartGame(Resource):
   def post(self):
-    return GameManager.startNewGame()
+    return gameMgr.startNewGame()
 
 class PinsKnocked(Resource):
   def post(self):
-    return GameManager.pinsKnocked()
+    pinsKnocked = request.form['pins-knocked']
+    return gameMgr.pinsKnocked(pinsKnocked)
 
 api.add_resource(StartGame, '/start-game')
 api.add_resource(PinsKnocked, '/pins-knocked')
