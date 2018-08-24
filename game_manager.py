@@ -30,11 +30,11 @@ class GameManager(object):
                      for frame in self.frameScores)
     return {'frame-scores': self.frameScores, 'total-score': totalScore}
 
-  def _isStrike(self):
-    return self.frameScores[self.frameCounter]['tries'][0] == constants.MAX_PINS
+  def _isStrike(self, frameCounter):
+    return self.frameScores[frameCounter]['tries'][0] == constants.MAX_PINS
 
-  def _isSpare(self):
-    tries = self.frameScores[self.frameCounter]['tries']
+  def _isSpare(self, frameCounter):
+    tries = self.frameScores[frameCounter]['tries']
     return tries[0] + tries[1] == constants.MAX_PINS
 
   def _validPinsKnocked(self, pinsKnocked):
@@ -47,7 +47,7 @@ class GameManager(object):
 
     frameTries = self.frameScores[self.frameCounter]['tries']
     if self.frameCounter == constants.TOTAL_FRAMES - 1:
-      if not self._isStrike() and (
+      if not self._isStrike(self.frameCounter) and (
           self.roll == 1 and frameTries[0] + pins > constants.MAX_PINS):
         return False, constants.INVALID_SECOND_ROLL.format(
             firstRollPins=frameTries[0])
@@ -60,22 +60,29 @@ class GameManager(object):
 
     return True, ''
 
+  def _updateBonusScore(self):
+    pass
+
   def _updateScore(self, pinsKnocked):
     self.frameScores[self.frameCounter]['tries'][self.roll] = pinsKnocked
+    self.frameScores[self.frameCounter]['score'] += pinsKnocked
 
     # If strike or spare in last frame.
     if self.frameCounter == constants.TOTAL_FRAMES - 1:
-      print 'here, frame ctr is 9 and roll', self.roll
-      if (not self.roll) or (
-          self.roll < 2 and (self._isStrike() or self._isSpare())):
+      if not self.roll or (self.roll < 2 and (
+          self._isStrike(self.frameCounter) or
+          self._isSpare(self.frameCounter))):
         self.roll += 1
       else:
         self.frameCounter += 1
-    elif not self._isStrike():
+    elif not self._isStrike(self.frameCounter):
       self.roll += 1
     else:
       self.roll = 0
       self.frameCounter += 1
+
+      # Update bonus scores for previous strike and spare frames.
+      self._updateBonusScore()
 
   def pinsKnocked(self, pinsKnocked):
     """Updates score when a new pin is knocked."""
