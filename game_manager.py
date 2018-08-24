@@ -22,7 +22,7 @@ class GameManager(object):
     self.roll = 0
     self.frameScores = collections.OrderedDict([
         (frameId, {'roll': {0: -1, 1: -1}, 'score': -1})
-        for frameId in range(10)
+        for frameId in range(constants.TOTAL_FRAMES)
     ])
     return {'message': 'New game started successfully.'}
 
@@ -33,7 +33,7 @@ class GameManager(object):
       total and per frame score.
     """
     if self.frameScores is None:
-      return {'message': 'Please start game before fetching score.'}
+      return {'message': constants.GAME_NOT_STARTED}
 
     totalScore = sum(self.frameScores[frame]['score']
                      for frame in self.frameScores
