@@ -17,7 +17,7 @@ class GameManager(object):
     self.frameCounter = 0
     self.roll = 0
     self.frameScores = collections.OrderedDict([
-        (frameId, {'tries': {0: -1, 1: -1}, 'score': 0})
+        (frameId, {'roll': {0: -1, 1: -1}, 'score': -1})
         for frameId in range(10)
     ])
     return {'message': 'New game started successfully.'}
@@ -27,17 +27,19 @@ class GameManager(object):
       return {'message': 'Please start game before fetching score.'}
 
     totalScore = sum(self.frameScores[frame]['score']
-                     for frame in self.frameScores)
+                     for frame in self.frameScores
+                     if self.frameScores[frame]['score'] != -1)
+
     return {'frame-scores': self.frameScores, 'total-score': totalScore}
 
   def _isStrike(self, frameCounter):
-    return self.frameScores[frameCounter]['tries'][0] == constants.MAX_PINS
+    return self.frameScores[frameCounter]['roll'][0] == constants.MAX_PINS
 
   def _isSpare(self, frameCounter):
-    tries = self.frameScores[frameCounter]['tries']
-    return tries[0] + tries[1] == constants.MAX_PINS
+    roll = self.frameScores[frameCounter]['roll']
+    return roll[0] + roll[1] == constants.MAX_PINS
 
-  def _validPinsKnocked(self, pinsKnocked):
+  def validPinsKnocked(self, pinsKnocked):
     if not pinsKnocked.isdigit():
       return False, 'Pins knocked should be a number.'
 
@@ -45,7 +47,7 @@ class GameManager(object):
     if pins < 0 or pins > 10:
       return False, 'Pins knocked should be positive number, less than 10.'
 
-    frameTries = self.frameScores[self.frameCounter]['tries']
+    frameTries = self.frameScores[self.frameCounter]['roll']
     if self.frameCounter == constants.TOTAL_FRAMES - 1:
       if not self._isStrike(self.frameCounter) and (
           self.roll == 1 and frameTries[0] + pins > constants.MAX_PINS):
@@ -60,43 +62,50 @@ class GameManager(object):
 
     return True, ''
 
-  def _updateBonusScore(self, currentFrame):
-    """Updates bonus score for last to last frame.
+  def updateScore(self, currentFrame, roll):
+    """...."""
 
-    Like bonus for frame-0 will be added to score once frame-2 has completed
-    because there may be cases where multiple strikes can be made in sequence so
-    next to next pins knocked will be required to calculate current bonus."""
+    frameData = self.frameScores[currentFrame]
 
-    if currentFrame < 2:
+    # Update score for current frame if both rolls are done its not a spare.
+    isStrike = self._isStrike(currentFrame)
+    isSpare = self._isSpare(currentFrame)
+    if roll and not (isSpare or isStrike):
+      frameData['score'] = frameData['roll'][0] + frameData['roll'][1]
+
+    # If this is the first frame, no need to check for previous frames.
+    if currentFrame < 1:
       return None
 
-    previousFrameId = currentFrame - 2
-    if not (self._isStrike(previousFrameId) or self._isSpare(previousFrameId)):
-      return None
+    # If previous frame scores are not updated as they were strike or spare,
+    # then update those using pins knocked in current frame rolls.
+    previousData = self.frameScores[currentFrame - 1]
+    if previousData['score'] == -1:
+      bonus1 = frameData['roll'][0]
+      bonus2 = frameData['roll'][1]
+      if self._isSpare(currentFrame - 1):
+        previousData['score'] = 10 + bonus1
+      else:
+        # If previous was an strike hit, it might be possible that previous to
+        # previous was also strike and score not set.
+        if currentFrame > 1:
+          data = self.frameScores[currentFrame - 2]
+          if data['score'] == -1:
+            data['score'] = 10 + 10 + bonus1
 
-    bonus1 = self.frameScores[previousFrameId + 1]['tries'][0]
-    bonus2 = 0
-    if self._isStrike(previousFrameId):
-      bonus2 = self.frameScores[previousFrameId + 1]['tries'][1]
-      if self._isStrike(previousFrameId + 1):
-        bonus2 = self.frameScores[previousFrameId + 2]['tries'][0]
-    self.frameScores[previousFrameId]['score'] += bonus1 + bonus2
+        # Update previous frame's score.
+        if roll:
+          previousData['score'] = 10 + bonus1 + bonus2
 
-    # If reached at last frame, update bonus score for second last also.
-    if currentFrame == constants.TOTAL_FRAMES - 1:
-      bonus1 = 0
-      bonus2 = 0
-      if self._isStrike(currentFrame - 1):
-        bonus1 = self.frameScores[currentFrame]['tries'][0]
-        bonus2 = self.frameScores[currentFrame]['tries'][1]
-      elif self._isSpare(previousFrameId):
-        bonus1 = self.frameScores[currentFrame]['tries'][0]
-      self.frameScores[currentFrame - 1]['score'] += bonus1 + bonus2
+    # If its last frame and all roles are made, we just have to add pins knocked
+    # in all (3 for strike and spare and 2 for normal) rolls made.
+    if currentFrame == constants.TOTAL_FRAMES - 1 and (not self.roll):
+      frameData['score'] = sum(frameData['roll'][r] for r in frameData['roll'])
 
-  def _updateScore(self, pinsKnocked):
+  def updatePinsAndScore(self, pinsKnocked):
     currentFrame = self.frameCounter
-    self.frameScores[self.frameCounter]['tries'][self.roll] = pinsKnocked
-    self.frameScores[self.frameCounter]['score'] += pinsKnocked
+    roll = self.roll
+    self.frameScores[self.frameCounter]['roll'][self.roll] = pinsKnocked
 
     # If strike or spare in last frame.
     if self.frameCounter == constants.TOTAL_FRAMES - 1:
@@ -105,6 +114,7 @@ class GameManager(object):
           self._isSpare(self.frameCounter))):
         self.roll += 1
       else:
+        self.roll = 0
         self.frameCounter += 1
     elif not (self.roll or self._isStrike(self.frameCounter)):
       self.roll += 1
@@ -112,10 +122,7 @@ class GameManager(object):
       self.roll = 0
       self.frameCounter += 1
 
-    # Updating bonus scores for previous strike and spare frames if frame has
-    # changed after this role.
-    if currentFrame != self.frameCounter:
-      self._updateBonusScore(currentFrame)
+    self.updateScore(currentFrame, roll)
 
   def pinsKnocked(self, pinsKnocked):
     """Updates score when a new pin is knocked."""
@@ -128,9 +135,9 @@ class GameManager(object):
                       'start a new game.')
         }
 
-    status, errorMsg = self._validPinsKnocked(pinsKnocked)
+    status, errorMsg = self.validPinsKnocked(pinsKnocked)
     if not status:
       return {'message': errorMsg}
 
-    self._updateScore(int(pinsKnocked))
+    self.updatePinsAndScore(int(pinsKnocked))
     return {'message': 'Scores updated for this move.'}
