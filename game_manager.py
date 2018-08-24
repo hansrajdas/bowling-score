@@ -60,10 +60,41 @@ class GameManager(object):
 
     return True, ''
 
-  def _updateBonusScore(self):
-    pass
+  def _updateBonusScore(self, currentFrame):
+    """Updates bonus score for last to last frame.
+
+    Like bonus for frame-0 will be added to score once frame-2 has completed
+    because there may be cases where multiple strikes can be made in sequence so
+    next to next pins knocked will be required to calculate current bonus."""
+
+    if currentFrame < 2:
+      return None
+
+    previousFrameId = currentFrame - 2
+    if not (self._isStrike(previousFrameId) or self._isSpare(previousFrameId)):
+      return None
+
+    bonus1 = self.frameScores[previousFrameId + 1]['tries'][0]
+    bonus2 = 0
+    if self._isStrike(previousFrameId):
+      bonus2 = self.frameScores[previousFrameId + 1]['tries'][1]
+      if self._isStrike(previousFrameId + 1):
+        bonus2 = self.frameScores[previousFrameId + 2]['tries'][0]
+    self.frameScores[previousFrameId]['score'] += bonus1 + bonus2
+
+    # If reached at last frame, update bonus score for second last also.
+    if currentFrame == constants.TOTAL_FRAMES - 1:
+      bonus1 = 0
+      bonus2 = 0
+      if self._isStrike(currentFrame - 1):
+        bonus1 = self.frameScores[currentFrame]['tries'][0]
+        bonus2 = self.frameScores[currentFrame]['tries'][1]
+      elif self._isSpare(previousFrameId):
+        bonus1 = self.frameScores[currentFrame]['tries'][0]
+      self.frameScores[currentFrame - 1]['score'] += bonus1 + bonus2
 
   def _updateScore(self, pinsKnocked):
+    currentFrame = self.frameCounter
     self.frameScores[self.frameCounter]['tries'][self.roll] = pinsKnocked
     self.frameScores[self.frameCounter]['score'] += pinsKnocked
 
@@ -75,14 +106,16 @@ class GameManager(object):
         self.roll += 1
       else:
         self.frameCounter += 1
-    elif not self._isStrike(self.frameCounter):
+    elif not (self.roll or self._isStrike(self.frameCounter)):
       self.roll += 1
     else:
       self.roll = 0
       self.frameCounter += 1
 
-      # Update bonus scores for previous strike and spare frames.
-      self._updateBonusScore()
+    # Updating bonus scores for previous strike and spare frames if frame has
+    # changed after this role.
+    if currentFrame != self.frameCounter:
+      self._updateBonusScore(currentFrame)
 
   def pinsKnocked(self, pinsKnocked):
     """Updates score when a new pin is knocked."""
