@@ -1,0 +1,9 @@
+curl http://127.0.0.1:5000/pins-knocked -d "pins-knocked=10" -X POST
+curl http://127.0.0.1:5000/pins-knocked -d "pins-knocked=10" -X POST
+curl http://127.0.0.1:5000/pins-knocked -d "pins-knocked=10" -X POST
+curl http://127.0.0.1:5000/pins-knocked -d "pins-knocked=10" -X POST
+curl http://127.0.0.1:5000/pins-knocked -d "pins-knocked=10" -X POST
+curl http://127.0.0.1:5000/pins-knocked -d "pins-knocked=10" -X POST
+curl http://127.0.0.1:5000/pins-knocked -d "pins-knocked=10" -X POST
+curl http://127.0.0.1:5000/pins-knocked -d "pins-knocked=10" -X POST
+curl http://127.0.0.1:5000/pins-knocked -d "pins-knocked=10" -X POST
