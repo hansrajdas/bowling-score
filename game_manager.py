@@ -1,5 +1,3 @@
-import collections
-
 from utils import constants
 from utils import singleton
 
@@ -20,10 +18,16 @@ class GameManager(object):
     """
     self.frameCounter = 0
     self.roll = 0
-    self.frameScores = collections.OrderedDict([
-        (frameId, {'roll': {0: -1, 1: -1}, 'score': -1})
-        for frameId in range(constants.TOTAL_FRAMES)
-    ])
+    self.frameScores = {
+      frameId: {
+        'roll': {
+          0: -1,
+          1: -1
+        },
+        'score': -1
+      }
+      for frameId in range(constants.TOTAL_FRAMES)
+    }
     return {'message': 'New game started successfully.'}
 
   def getScore(self):
