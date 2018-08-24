@@ -8,12 +8,16 @@ class GameManager(object):
   """Manages score of bowling game."""
 
   def __init__(self):
+    """Initialises object."""
     self.frameScores = None  # Hold pins knocked and score scored in each frame.
     self.frameCounter = 0  # Would be 0 to 9.
     self.roll = 0  # 0 or 1
 
   def startNewGame(self):
-    """Starts a new game."""
+    """Initialises all object variables to starts a new game.
+
+    Returns: Dictionary with success message string.
+    """
     self.frameCounter = 0
     self.roll = 0
     self.frameScores = collections.OrderedDict([
@@ -23,6 +27,11 @@ class GameManager(object):
     return {'message': 'New game started successfully.'}
 
   def getScore(self):
+    """Returns total score and per frame score if game is ongoing.
+
+    Returns: Dictionary with error message if game is not started otherwise
+      total and per frame score.
+    """
     if self.frameScores is None:
       return {'message': 'Please start game before fetching score.'}
 
