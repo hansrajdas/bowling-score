@@ -21,8 +21,11 @@ class StartGame(Resource):
 
 class PinsKnocked(Resource):
   def post(self):
-    pinsKnocked = request.form['pins-knocked']
-    return gameMgr.pinsKnocked(pinsKnocked)
+    if request.form.get('pins-knocked', None) is None:
+      return {
+        'message': 'Invalid request, mandatory parameter(pins-knocked) missing.'
+      }
+    return gameMgr.pinsKnocked(request.form['pins-knocked'])
 
 api.add_resource(StartGame, '/start-game')
 api.add_resource(PinsKnocked, '/pins-knocked')
