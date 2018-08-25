@@ -39,11 +39,11 @@ class GameManagerTest(unittest.TestCase):
     self.assertEqual(self.game.getScore(), expectedRsp)
 
   def testPinsKnockedNegative(self):
-    """Verifies that if pins knocked is not valid, error message is returned."""
+    """Verifies that if pins knocked is invalid, error message is returned."""
 
     # Case 1: Game not started, should return relevant error message.
     self.assertEqual(self.game.pinsKnocked('5'),
-                    {'message': constants.PINS_KNOCKED_BEFORE_GAME_STARTED})
+                     {'message': constants.PINS_KNOCKED_BEFORE_GAME_STARTED})
 
     self.game.startNewGame()
 
@@ -66,8 +66,8 @@ class GameManagerTest(unittest.TestCase):
         'message': constants.INVALID_SECOND_ROLL.format(firstRollPins=roll1)
       })
 
-    # Case 5: Pins knocked received when game has ended, should ask for starting
-    # new game.
+    # Case 5: Pins knocked received when game has ended, should ask for
+    # starting new game.
     self.game.startNewGame()
     for roll in range(2*constants.TOTAL_FRAMES):
       self.assertEqual(

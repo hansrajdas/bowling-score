@@ -10,7 +10,7 @@ class GameManager(object):
 
   def __init__(self):
     """Initialises object."""
-    self.frameScores = None  # Hold pins knocked and score scored in each frame.
+    self.frameScores = None  # Holds per frame pins knocked and score.
     self.frameCounter = 0  # Would be 0 to 9.
     self.roll = 0  # 0 or 1
 
@@ -90,7 +90,7 @@ class GameManager(object):
     frameTries = self.frameScores[self.frameCounter]['roll']
     if self.frameCounter == constants.TOTAL_FRAMES - 1:
       if not self._isStrike(self.frameCounter) and (
-          self.roll == 1 and frameTries[0] + pins > constants.MAX_PINS):
+         self.roll == 1 and frameTries[0] + pins > constants.MAX_PINS):
         return False, constants.INVALID_SECOND_ROLL.format(
             firstRollPins=frameTries[0])
       else:
@@ -144,8 +144,8 @@ class GameManager(object):
         if roll:
           previousData['score'] = constants.MAX_PINS + bonus1 + bonus2
 
-    # If its last frame and all roles are made, we just have to add pins knocked
-    # in all (3 for strike and spare and 2 for normal) rolls made.
+    # If its last frame and all roles are made, we just have to add pins
+    # knocked in all (3 for strike and spare and 2 for normal) rolls made.
     if currentFrame == constants.TOTAL_FRAMES - 1 and (not self.roll):
       frameData['score'] = sum(frameData['roll'][r] for r in frameData['roll'])
 
@@ -165,8 +165,8 @@ class GameManager(object):
     if self.frameCounter == constants.TOTAL_FRAMES - 1:
       # If strike or spare in last frame, there would be 3 rolls.
       if not self.roll or (self.roll < 2 and (
-          self._isStrike(self.frameCounter) or
-          self._isSpare(self.frameCounter))):
+         self._isStrike(self.frameCounter) or
+         self._isSpare(self.frameCounter))):
         self.roll += 1
       else:
         self.roll = 0
