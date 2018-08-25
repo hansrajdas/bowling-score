@@ -1,3 +1,5 @@
+"""Contains class and all methods required to manager bowling score."""
+
 from utils import constants
 from utils import singleton
 

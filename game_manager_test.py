@@ -1,3 +1,5 @@
+"""Contains unit test cases for game_manager.py."""
+
 import unittest
 
 from game_manager import GameManager

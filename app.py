@@ -1,3 +1,5 @@
+"""Implements and maps each handler to respective class."""
+
 from flask import Flask
 from flask import request
 
