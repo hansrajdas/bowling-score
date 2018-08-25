@@ -34,12 +34,12 @@ This API can be used by a bowling house. On the screen the user starts the game,
   - **returns**: Total score and per frame pins knocked and corresponding score
   - **returns**: 200 OK
 
-## Run
-* Application: python app.py
-* Tests: python -m unittest game_manager_test
+## Usage
+* Application: *python app.py*
+* Tests: *python -m unittest game_manager_test*
 * Coverage:
-    * Run coverage: python -m coverage run game_manager_test.py
-    * Generate report: python -m coverage report -m
+    * Run coverage: *python -m coverage run game_manager_test.py*
+    * Generate report: *python -m coverage report -m*
 
 ## Example
 Any rest client like postman or curl can be used. Below are some curl commands used with above application:
