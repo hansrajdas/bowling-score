@@ -7,7 +7,9 @@
 ## Run
 * Application: python app.py
 * Tests: python -m unittest game_manager_test
-* Coverage: python -m coverage report -m
+* Coverage:
+  ** Run: python -m coverage run game_manager_test.py
+  ** Report: python -m coverage report -m
 
 ## API Endpoints
 * Start a new game
