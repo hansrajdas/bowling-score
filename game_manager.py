@@ -1,6 +1,7 @@
 from utils import constants
 from utils import singleton
 
+
 @singleton.singleton
 class GameManager(object):
   """Manages score of bowling game."""
@@ -54,11 +55,11 @@ class GameManager(object):
 
   def validPinsKnocked(self, pinsKnocked):
     if not pinsKnocked.isdigit():
-      return False, 'Pins knocked should be a number.'
+      return False, constants.INVALID_PINS_KNOCKED
 
     pins = int(pinsKnocked)
-    if pins < 0 or pins > 10:
-      return False, 'Pins knocked should be positive number, less than 10.'
+    if pins < 0 or pins > constants.MAX_PINS:
+      return False, constants.INVALID_PINS_KNOCKED
 
     frameTries = self.frameScores[self.frameCounter]['roll']
     if self.frameCounter == constants.TOTAL_FRAMES - 1:
@@ -69,7 +70,7 @@ class GameManager(object):
       else:
         return True, ''
 
-    if self.roll == 1 and frameTries[0] + pins > constants.MAX_PINS:
+    if self.roll and frameTries[0] + pins > constants.MAX_PINS:
       return False, constants.INVALID_SECOND_ROLL.format(
           firstRollPins=frameTries[0])
 
@@ -97,18 +98,18 @@ class GameManager(object):
       bonus1 = frameData['roll'][0]
       bonus2 = frameData['roll'][1]
       if self._isSpare(currentFrame - 1):
-        previousData['score'] = 10 + bonus1
+        previousData['score'] = constants.MAX_PINS + bonus1
       else:
         # If previous was an strike hit, it might be possible that previous to
         # previous was also strike and score not set.
         if currentFrame > 1:
           data = self.frameScores[currentFrame - 2]
           if data['score'] == -1:
-            data['score'] = 10 + 10 + bonus1
+            data['score'] = 20 + bonus1  # Double strike case.
 
         # Update previous frame's score.
         if roll:
-          previousData['score'] = 10 + bonus1 + bonus2
+          previousData['score'] = constants.MAX_PINS + bonus1 + bonus2
 
     # If its last frame and all roles are made, we just have to add pins knocked
     # in all (3 for strike and spare and 2 for normal) rolls made.
@@ -138,19 +139,20 @@ class GameManager(object):
     self.updateScore(currentFrame, roll)
 
   def pinsKnocked(self, pinsKnocked):
-    """Updates score when a new pin is knocked."""
+    """Updates score when a new pin is knocked.
+
+    Args:
+      pinsKnocked: Number of pins knocked in a particular roll.
+    """
     if self.frameScores is None:
-      return {'message': 'Please start game before this operation.'}
+      return {'message': constants.PINS_KNOCKED_BEFORE_GAME_STARTED}
 
     if self.frameCounter == constants.TOTAL_FRAMES:
-      return {
-          'message': ('All rolls done for this game, please check score and '
-                      'start a new game.')
-        }
+      return {'message': constants.GAME_ENDED}
 
     status, errorMsg = self.validPinsKnocked(pinsKnocked)
     if not status:
       return {'message': errorMsg}
 
     self.updatePinsAndScore(int(pinsKnocked))
-    return {'message': 'Scores updated for this move.'}
+    return {'message': constants.SCORES_UPDATED}
