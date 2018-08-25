@@ -47,13 +47,37 @@ class GameManager(object):
     return {'frame-scores': self.frameScores, 'total-score': totalScore}
 
   def _isStrike(self, frameCounter):
+    """Checks if given frame counter was strike or not.
+
+    Args:
+      frameCounter: Frame counter, 0 to 9.
+
+    Returns: True or False.
+    """
     return self.frameScores[frameCounter]['roll'][0] == constants.MAX_PINS
 
   def _isSpare(self, frameCounter):
+    """Checks if given frame counter was spare or not.
+
+    Args:
+      frameCounter: Frame counter, 0 to 9.
+
+    Returns: True or False.
+    """
     roll = self.frameScores[frameCounter]['roll']
     return roll[0] + roll[1] == constants.MAX_PINS
 
   def validPinsKnocked(self, pinsKnocked):
+    """Validates if pins knocked received is correct or not.
+
+    This also validates based to rolls, this is first, second or
+    third(in case of last frame) roll.
+
+    Args:
+      pinsKnocked: Number of pins knocked.
+
+    Returns: True, if pinks knocked is valid else False with error message.
+    """
     if not pinsKnocked.isdigit():
       return False, constants.INVALID_PINS_KNOCKED
 
@@ -77,7 +101,14 @@ class GameManager(object):
     return True, ''
 
   def updateScore(self, currentFrame, roll):
-    """...."""
+    """Updates score for current frame.
+
+    Also updates score for previous frames if pending for this roll.
+
+    Args:
+      currentFrame: Current frame, frame for which roll is made.
+      roll: Roll count, 0 or 1. Can be 2 also but only when currentFrame is 9.
+    """
 
     frameData = self.frameScores[currentFrame]
 
@@ -117,12 +148,20 @@ class GameManager(object):
       frameData['score'] = sum(frameData['roll'][r] for r in frameData['roll'])
 
   def updatePinsAndScore(self, pinsKnocked):
+    """Updates pins knocked and score for a frame.
+
+    Also tracks next roll will be in same frame or next frame (in case there is
+    strike in this frame).
+
+    Args:
+      pinsKnocked: Number of pins knocked.
+    """
     currentFrame = self.frameCounter
     roll = self.roll
     self.frameScores[self.frameCounter]['roll'][self.roll] = pinsKnocked
 
-    # If strike or spare in last frame.
     if self.frameCounter == constants.TOTAL_FRAMES - 1:
+      # If strike or spare in last frame, there would be 3 rolls.
       if not self.roll or (self.roll < 2 and (
           self._isStrike(self.frameCounter) or
           self._isSpare(self.frameCounter))):
@@ -143,6 +182,9 @@ class GameManager(object):
 
     Args:
       pinsKnocked: Number of pins knocked in a particular roll.
+
+    Returns: Dictionary with success string or required error string in case of
+      some error.
     """
     if self.frameScores is None:
       return {'message': constants.PINS_KNOCKED_BEFORE_GAME_STARTED}
