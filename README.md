@@ -24,46 +24,47 @@ pip install -r requirements.txt
 
 ## API Endpoints :-
 **/start-game**
-- description: Starts a new game.
-- method: `POST`
-- arguments: `None`
-- data: `None`
-- returns: Success message in JSON format.
+- Description: Starts a new game
+- Method: `POST`
+- Arguments: `None`
+- Data: `None`
+- Returns: Success message in JSON format.
 - HTTP response: `200 OK`
 
 **/pins-knocked**
-- description: Input pins knocked in a roll.
-- method: `POST`
-- arguments: `None`
-- data: Number of pins knocked, e.g. `pins-knocked=5`
-- returns: Success message or error message based on pins-knocked in JSON format.
+- Description: Input pins knocked in a roll
+- Method: `POST`
+- Arguments: `None`
+- Data: Number of pins knocked, e.g. `pins-knocked=5`
+- Returns: Success message or error message based on pins-knocked in JSON format
 - HTTP response: `200 OK`
 
 **/get-score**
-- method: `GET`
-- arguments: `None`
-- returns: Total score and per frame pins knocked and corresponding score.
+- Description: Fetches frame scores and total score of current game
+- Method: `GET`
+- Arguments: `None`
+- Returns: Total score and per frame pins knocked and corresponding score
 - HTTP response: `200 OK`
 
 ## Usage
-* Application:
+* Application
 ```
 python app.py
 ```
-* Tests:
+* Tests
 ```
 python -m unittest game_manager_test
 ```
-* Coverage:
-    * Run coverage:
+* Coverage
+    * Run coverage
     ```
     python -m coverage run game_manager_test.py
     ```
-    * Get stats report:
+    * Get stats report
     ```
     python -m coverage report -m
     ```
-    * Generate HTML report:
+    * Generate HTML report
     ```
     python -m coverage html
     ```
