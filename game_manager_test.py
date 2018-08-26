@@ -21,7 +21,6 @@ class GameManagerTest(unittest.TestCase):
         """Verifies, score is fetched in expected format when is ongoing.
 
         And if game has not started yet, error string should be returned."""
-
         # Case 1: Game is not started yet, should return error message.
         self.assertEqual(self.game.get_score(),
                          {'message': constants.GAME_NOT_STARTED})
@@ -43,7 +42,6 @@ class GameManagerTest(unittest.TestCase):
 
     def test_pins_knocked_negative(self):
         """Verifies that if pins knocked is invalid, error is returned."""
-
         # Case 1: Game not started, should return relevant error message.
         self.assertEqual(
           self.game.pins_knocked('5'),
@@ -80,7 +78,6 @@ class GameManagerTest(unittest.TestCase):
 
     def test_pins_knocked_all_strikes(self):
         """Verifies perfect 300 case."""
-
         self.game.start_new_game()
         # Last frame has 3 rolls so +2.
         for roll in range(constants.TOTAL_FRAMES + 2):
@@ -103,7 +100,6 @@ class GameManagerTest(unittest.TestCase):
 
     def test_pins_knocked_all_spares(self):
         """Verifies case when all frames knocked with a spare."""
-
         self.game.start_new_game()
         # Last frame has 3 rolls so +1.
         for roll in range(2*constants.TOTAL_FRAMES + 1):
@@ -126,7 +122,6 @@ class GameManagerTest(unittest.TestCase):
 
     def test_pins_knocked_normal(self):
         """Verifies case when no frame is knocked with a strike or spare."""
-
         self.game.start_new_game()
         for roll in range(2*constants.TOTAL_FRAMES):
             self.assertEqual(self.game.pins_knocked('4'),

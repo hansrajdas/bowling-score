@@ -7,7 +7,6 @@ from utils import singleton
 @singleton.singleton
 class GameManager(object):
     """Manages score of bowling game."""
-
     def __init__(self):
         """Initialises object."""
         self.frame_scores = None  # Holds per frame pins knocked and score.
