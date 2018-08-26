@@ -45,9 +45,9 @@ This API can be used by a bowling house. On the screen the user starts the game,
 ## Example
 Any rest client like postman or curl can be used. Below are some curl commands used with above application:
 * Start new game
-    curl http://127.0.0.1:5000/start-game -X POST
+    *     curl http://127.0.0.1:5000/start-game -X POST
 * Input pins knocked down by ball
-    curl http://127.0.0.1:5000/pins-knocked -d "pins-knocked=10" -X POST
+    *     curl http://127.0.0.1:5000/pins-knocked -d "pins-knocked=10" -X POST
 * Output current game score
-    curl http://127.0.0.1:5000/get-score
-    curl http://127.0.0.1:5000
+    *     curl http://127.0.0.1:5000/get-score
+    *     curl http://127.0.0.1:5000
