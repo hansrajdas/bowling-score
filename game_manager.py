@@ -97,7 +97,7 @@ class GameManager(object):
             else:
                 return True, ''
 
-        if self.roll and frame_tries[0] + pins > constants.MAX_PINS:
+        if self.roll and (frame_tries[0] + pins) > constants.MAX_PINS:
             return False, constants.INVALID_SECOND_ROLL.format(
               first_roll_pins=frame_tries[0])
 
@@ -113,7 +113,6 @@ class GameManager(object):
           roll: Roll count, 0 or 1. Can be 2 also but only when current_frame
             is 9.
         """
-
         frame_data = self.frame_scores[current_frame]
 
         # Update score for current frame if both rolls are done and its not a
