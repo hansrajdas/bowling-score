@@ -65,8 +65,8 @@ class GameManagerTest(unittest.TestCase):
         self.assertEqual(self.game.pins_knocked(roll1),
                          {'message': constants.SCORES_UPDATED})
 
-        errMsg = constants.INVALID_SECOND_ROLL.format(first_roll_pins=roll1)
-        self.assertEqual(self.game.pins_knocked(roll2), {'message': errMsg})
+        err_msg = constants.INVALID_SECOND_ROLL.format(first_roll_pins=roll1)
+        self.assertEqual(self.game.pins_knocked(roll2), {'message': err_msg})
 
         # Case 5: Pins knocked received when game has ended, should ask for
         # starting new game.
