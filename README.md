@@ -17,8 +17,10 @@ pip install -r requirements.txt
 
 
 ## Assumptions
-* This application supports one game and one player a time.
+* This application supports one game and one player at a time.
 * When a new game is started previous game's score will be lost.
+* -1 in frame score indicates either rolls not made for this frame or score is not updated yet, it is dependent on future rolls.
+* -1 in frame roll indicates either roll not made for this frame or first roll in this frame was knocked with a strike.
 
 ## API Endpoints :-
 **/start-game**
