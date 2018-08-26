@@ -11,9 +11,9 @@ def singleton(classname):
     """
     instances = {}
 
-    def getInstance(*args, **kwargs):
+    def get_instance(*args, **kwargs):
         """Creates (if not already created) and returns object of a class."""
         if classname not in instances:
             instances[classname] = classname(*args, **kwargs)
         return instances[classname]
-    return getInstance
+    return get_instance

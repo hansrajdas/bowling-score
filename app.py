@@ -11,17 +11,17 @@ from game_manager import GameManager
 app = Flask(__name__)
 api = Api(app)
 
-gameMgr = GameManager()
+game_manager = GameManager()
 
 
 class GetScore(Resource):
     def get(self):
-        return gameMgr.getScore()
+        return game_manager.get_score()
 
 
 class StartGame(Resource):
     def post(self):
-        return gameMgr.startNewGame()
+        return game_manager.start_new_game()
 
 
 class PinsKnocked(Resource):
@@ -30,7 +30,7 @@ class PinsKnocked(Resource):
             return {
               'message': 'Invalid request, parameter `pins-knocked` missing.'
             }
-        return gameMgr.pinsKnocked(request.form['pins-knocked'])
+        return game_manager.pins_knocked(request.form['pins-knocked'])
 
 
 api.add_resource(StartGame, '/start-game')
