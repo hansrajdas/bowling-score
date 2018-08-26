@@ -15,16 +15,19 @@ game_manager = GameManager()
 
 
 class GetScore(Resource):
+    """Implements GET method for fetching scores."""
     def get(self):
         return game_manager.get_score()
 
 
 class StartGame(Resource):
+    """Implements POST method for starting a new game."""
     def post(self):
         return game_manager.start_new_game()
 
 
 class PinsKnocked(Resource):
+    """Implements POST method to input pins knocked in a roll."""
     def post(self):
         if request.form.get('pins-knocked', None) is None:
             return {
