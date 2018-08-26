@@ -12,7 +12,7 @@ class GameManager(object):
         """Initialises object."""
         self.frame_scores = None  # Holds per frame pins knocked and score.
         self.frame_counter = 0  # Would be 0 to 9.
-        self.roll = 0  # 0 or 1
+        self.roll = 0  # 0 or 1, 2 in case last frame is kncoked with strike.
 
     def start_new_game(self):
         """Initialises all object variables to starts a new game.
